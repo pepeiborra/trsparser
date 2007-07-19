@@ -1,0 +1,35 @@
+name: TRSParser
+version: 0.1
+license: AllRightsReserved
+license-file: ""
+copyright:
+maintainer: Pepe Iborra <pepeiborra@gmail.com
+build-depends: base -any, parsec
+stability:
+homepage:
+package-url:
+synopsis:
+description: 
+category:
+author:
+tested-with:
+extra-source-files:
+extra-tmp-files:
+exposed-modules: TRSParser, TRS
+other-modules: SRS, SRSParser, SRSScanner, TRSScanner
+buildable: True
+cc-options:
+ld-options:
+frameworks:
+c-sources:
+extensions:
+extra-libraries:
+extra-lib-dirs:
+includes:
+include-dirs:
+hs-source-dirs: src
+other-modules:
+ghc-prof-options: 
+ghc-options: -O2
+hugs-options:
+nhc-options:
