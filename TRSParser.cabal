@@ -4,8 +4,8 @@ license: AllRightsReserved
 license-file: ""
 copyright:
 maintainer: Pepe Iborra <pepeiborra@gmail.com
-build-depends: base -any, parsec
-stability:
+build-depends: base -any, parsec, pretty
+stability: stable
 homepage:
 package-url:
 synopsis:

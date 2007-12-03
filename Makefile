@@ -1,1 +1,0 @@
-include ~/stuff/cabal-make/my-cabal-make.inc
