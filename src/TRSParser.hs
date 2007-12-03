@@ -11,7 +11,7 @@
 
 module TRSParser where
 import Text.ParserCombinators.Parsec
-import TRS
+import TRSTypes
 import TRSScanner
 import Control.Monad
 

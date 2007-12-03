@@ -11,7 +11,7 @@
 
 module SRSParser(srsParser) where
 import Text.ParserCombinators.Parsec
-import SRS
+import SRSTypes
 import SRSScanner
 import Control.Monad
 
