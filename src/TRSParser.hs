@@ -16,7 +16,7 @@ import TRSScanner
 import Control.Monad
 
 trsParser :: Parser Spec
-trsParser = liftM Spec (many (whiteSpace >> parens decl))
+trsParser = liftM Spec (many1 (whiteSpace >> parens decl))
 
 decl, declVar, declTheory, declRules, declStrategy :: Parser Decl
 decl = (declVar <|> declTheory <|> declRules <|> declStrategy <|> declAny)
