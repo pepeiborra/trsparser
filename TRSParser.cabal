@@ -1,10 +1,11 @@
 name: TRSParser
-version: 0.1
+version: 0.2
 license: AllRightsReserved
+build-type: Simple
 license-file: ""
 copyright:
-maintainer: Pepe Iborra <pepeiborra@gmail.com
-build-depends: base -any, parsec < 3.0, pretty
+maintainer: Pepe Iborra <pepeiborra@gmail.com>
+build-depends: base -any, containers, parsec < 3.0, pretty, term
 stability: stable
 homepage:
 package-url:
@@ -14,10 +15,10 @@ category:
 author: Pepe Iborra
 exposed-modules: TRSParser, TRSTypes
 other-modules: SRSTypes, SRSParser, SRSScanner, TRSScanner
-language: Generics
+language: 
 buildable: True
 hs-source-dirs: src
 ghc-prof-options: 
-ghc-options: -O2 -fglasgow-exts
+ghc-options:
 hugs-options:
 nhc-options:

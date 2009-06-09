@@ -14,38 +14,51 @@ import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
 import Control.Monad
+import Data.Set (Set)
+import qualified Data.Set as Set
 
-trsParser :: Parser Spec
+type Vars = Set Id
+type TRSParser a = GenParser Char Vars a
+
+trsParser :: TRSParser Spec
 trsParser = liftM Spec (many1 (whiteSpace >> parens decl))
 
-decl, declVar, declTheory, declRules, declStrategy :: Parser Decl
+decl, declVar, declTheory, declRules, declStrategy :: TRSParser Decl
 decl = (declVar <|> declTheory <|> declRules <|> declStrategy <|> declAny)
 
 declRules  = reserved "RULES" >> liftM Rules (many rule)
-declVar    = reserved "VAR" >> liftM Var phrase
+declVar    = do
+  reserved "VAR"
+  vv <- phrase
+  setState (Set.fromList vv)
+  return (Var vv)
+
 declTheory = reserved "THEORY" >> liftM Theory (many$ parens theory)
-		   
+
 theory =     (phrase >>= return.TVar)
-	 <|> 
+	 <|>
 	     (many equation >>= return.Equations)
 
-equation :: Parser Equation
-equation = 
+equation :: TRSParser Equation
+equation =
  do t1 <- term
     reservedOp "=="
     t2 <- term
     return (t1 :==: t2)
 
-term :: Parser Term
-term = 
+term :: TRSParser Term
+term =
  do n <- identifier
+    env <- getState
     terms <- option [] (parens (commaSep' term))
-    return (T n terms)
-          
-declStrategy = 
+    return $ if n `Set.member` env && null terms
+             then var n
+             else mkT n terms
+
+declStrategy =
  do reserved "STRATEGY" >> liftM Strategy (inn <|> out <|> ctx)
- 
-inn, out, ctx :: Parser Strategy
+
+inn, out, ctx :: TRSParser Strategy
 inn = reserved "INNERMOST"  >> return InnerMost
 out = reserved "OUTERMOST"  >> return OuterMost
 ctx = 
@@ -55,7 +68,7 @@ ctx =
 		               return (a, map fromInteger b))
     return$ Context strats  
          
-rule :: Parser Rule
+rule :: TRSParser Rule
 rule = 
  do sr <- simpleRule
     conds <- option [] (reservedOp "|" >> commaSep' cond)
@@ -84,7 +97,7 @@ declAny  =
     decls <- many anyContent
     return$ Any (Just name) decls
 
-anyContent, anyI, anyS, anyA :: Parser AnyContent
+anyContent, anyI, anyS, anyA :: TRSParser AnyContent
 anyContent = anyI <|> anyS <|> anyA <|> (comma >> anyContent)
 
 anyI = liftM AnyI identifier

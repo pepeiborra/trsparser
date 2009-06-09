@@ -15,7 +15,7 @@ import qualified Text.ParserCombinators.Parsec.Token as P
 import Text.ParserCombinators.Parsec.Language( haskellStyle, emptyDef )
 import SRSScanner hiding (lexer)
 
-lexer :: P.TokenParser ()
+--lexer :: P.TokenParser ()
 lexer  = P.makeTokenParser $
          srsDef  { 
      P.opLetter       = oneOf ")(\",><="
