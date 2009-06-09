@@ -9,11 +9,10 @@
 -}
 -----------------------------------------------------------------------------------------
 
-module TRSTypes (module TRSTypes, var) where
+module TRSTypes where
 
 import Data.Term hiding (Term)
 import Data.Term.Simple
-import Data.Term.Var
 
 type Spec = SpecF Decl
 data SpecF a = Spec [a]
@@ -32,8 +31,10 @@ data TheoryDecl = TVar [Id]
 		| Equations [Equation]
  deriving (Eq, Show)
 
-type Term = Term1 String Var
+type Term = Term1 String String
 mkT = term
+var :: String -> Term
+var = return
 
 type Equation = EquationF Term
 data EquationF a = a :==: a
