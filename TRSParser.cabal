@@ -3,22 +3,17 @@ version: 0.2
 license: AllRightsReserved
 build-type: Simple
 license-file: ""
-copyright:
+copyright: 
 maintainer: Pepe Iborra <pepeiborra@gmail.com>
 build-depends: base -any, containers, parsec < 3.0, pretty, term
 stability: stable
-homepage:
-package-url:
-synopsis:
-description: A parser for the Rewriting Termination Competition format (taken from the muTerm tool)
+homepage: A parser for the Rewriting Termination Competition format
+package-url: 
+synopsis: A parser for the Rewriting Termination Competition format
+description: A parser for the Rewriting Termination Competition format
 category:
 author: Pepe Iborra
 exposed-modules: TRSParser, TRSTypes
 other-modules: SRSTypes, SRSParser, SRSScanner, TRSScanner
-language: 
 buildable: True
 hs-source-dirs: src
-ghc-prof-options: 
-ghc-options:
-hugs-options:
-nhc-options:
