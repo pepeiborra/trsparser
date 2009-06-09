@@ -19,7 +19,7 @@ srsDef = emptyDef  {
    , P.commentEnd     = ""
    , P.commentLine    = ""
    , P.nestedComments = True
-   , P.identStart     = alphaNum <|> oneOf "<>!\\$%&/.:;-_{}[]^*+?=#@|" -- noneOf " ()\","
+   , P.identStart     = alphaNum <|> oneOf "<>~!\\·$%&/.:;-_{}[]^*+ç¡'¿?=#@|" -- noneOf " ()\","
    , P.identLetter    = P.identStart srsDef
    , P.opStart        = oneOf ")(\"-"
    , P.opLetter       = oneOf ")(\",>="
