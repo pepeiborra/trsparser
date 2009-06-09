@@ -19,7 +19,7 @@ import SRSScanner hiding (lexer)
 lexer  = P.makeTokenParser $
          srsDef  { 
      P.opLetter       = oneOf ")(\",><="
-   , P.reservedNames= ["RULES","STRATEGY","INNERMOST","OUTERMOST", "CONTEXTSENSITIVE", "EQUATIONS", "THEORY", "VAR"]
+   , P.reservedNames= ["RULES","PAIRS","STRATEGY","INNERMOST","OUTERMOST", "CONTEXTSENSITIVE", "EQUATIONS", "THEORY", "VAR"]
    , P.reservedOpNames  = ["->","->=","==","-><-","|"]
    , P.caseSensitive  = True
    }

@@ -9,7 +9,7 @@
 -}
 -----------------------------------------------------------------------------------------
 
-module TRSParser (trsParser, term) where
+module TRSParser (TRSParser, trsParser, term) where
 import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
@@ -27,6 +27,7 @@ decl, declVar, declTheory, declRules, declStrategy :: TRSParser Decl
 decl = (declVar <|> declTheory <|> declRules <|> declStrategy <|> declAny)
 
 declRules  = reserved "RULES" >> liftM Rules (many rule)
+declPairs  = reserved "PAIRS" >> liftM Pairs (many rule)
 declVar    = do
   reserved "VAR"
   vv <- phrase

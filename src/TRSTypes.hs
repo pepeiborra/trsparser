@@ -22,6 +22,7 @@ data SpecF a = Spec [a]
 type Decl = DeclF Rule
 data DeclF a = Var [Id]
 	     | Theory [TheoryDecl]
+             | Pairs [a]
 	     | Rules [a]
 	     | Strategy Strategy
 	     | Any (Maybe String) [AnyContent]
@@ -67,6 +68,7 @@ instance Functor DeclF where
     fmap _ (Var vv)     = Var vv
     fmap _ (Theory tt)  = Theory tt
     fmap f (Rules rr)   = Rules (map f rr)
+    fmap f (Pairs rr)   = Pairs (map f rr)
     fmap _ (Strategy s) = Strategy s
     fmap _ (Any ms c)   = Any ms c
 
