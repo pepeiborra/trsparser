@@ -11,6 +11,8 @@
 
 module TRSTypes where
 
+import Data.Foldable
+import Data.Monoid (Monoid(..))
 import Data.Term hiding (Term)
 import Data.Term.Simple
 
@@ -82,3 +84,23 @@ instance Functor SimpleRuleF where
 instance Functor CondF where
     fmap f (a :->: b)   = f a :->: f b
     fmap f (a :-><-: b) = f a :-><-: f b
+
+
+instance Foldable SpecF where foldMap f (Spec aa) = foldMap f aa
+instance Foldable DeclF where
+    foldMap _ (Var vv)     = mempty
+    foldMap _ (Theory tt)  = mempty
+    foldMap f (Rules rr)   = (foldMap f rr)
+    foldMap f (Pairs rr)   = (foldMap f rr)
+    foldMap _ (Strategy s) = mempty
+    foldMap _ (Any ms c)   = mempty
+
+instance Foldable RuleF where foldMap f (Rule sr c) = foldMap f sr `mappend` (foldMap.foldMap) f c
+
+instance Foldable EquationF where foldMap f (a :==: b) = f a `mappend` f b
+instance Foldable SimpleRuleF where
+    foldMap f (a :->  b) = f a `mappend` f b
+    foldMap f (a :->= b) = f a `mappend` f b
+instance Foldable CondF where
+    foldMap f (a :->: b)   = f a `mappend` f b
+    foldMap f (a :-><-: b) = f a `mappend` f b
