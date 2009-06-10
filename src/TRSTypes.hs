@@ -56,7 +56,7 @@ data CondF a = a :-><-: a
 	     | a  :->:  a
  deriving (Eq, Show)
 
-data Strategy = InnerMost | OuterMost | Context [(Id, [Int])]
+data Strategy = InnerMost | OuterMost | Context [(Id, [Int])] | Other String
  deriving (Eq, Show)
 
 data AnyContent = AnyI Id

@@ -57,11 +57,12 @@ term =
              else mkT n terms
 
 declStrategy =
- do reserved "STRATEGY" >> liftM Strategy (inn <|> out <|> ctx)
+ do reserved "STRATEGY" >> liftM Strategy (inn <|> out <|> ctx <|> otherStrat)
 
 inn, out, ctx :: TRSParser Strategy
 inn = reserved "INNERMOST"  >> return InnerMost
 out = reserved "OUTERMOST"  >> return OuterMost
+otherStrat = Other `liftM` identifier
 ctx = 
  do reserved "CONTEXTSENSITIVE" 
     strats <- many$ parens (do a <- identifier
