@@ -56,8 +56,23 @@ data CondF a = a :-><-: a
 	     | a  :->:  a
  deriving (Eq, Show)
 
-data Strategy = InnerMost | OuterMost | Context [(Id, [Int])] | Other String
+
+data Strategy = InnerMost
+              | OuterMost
+              | Context [(Id, [Int])]
+              | Narrowing
+              | NarrowingG Goal
+              | ConstructorNarrowing
+              | ConstructorNarrowingG Goal
+              | BasicNarrowing
+              | BasicNarrowingG Goal
+              | InnermostNarrowing
+              | InnermostNarrowingG Goal
+              | Other String
  deriving (Eq, Show)
+
+type Goal = TermF String Mode
+data Mode = G | V deriving (Eq, Bounded, Show)
 
 data AnyContent = AnyI Id
                 | AnyS String

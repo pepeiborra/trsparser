@@ -14,6 +14,7 @@ import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
 import Control.Monad
+import Data.Term.Simple (TermF(..))
 import Data.Set (Set)
 import qualified Data.Set as Set
 
@@ -56,15 +57,30 @@ term =
              then var n
              else mkT n terms
 
-declStrategy =
- do reserved "STRATEGY" >> liftM Strategy (inn <|> out <|> ctx <|> otherStrat)
+modesP = parens (modeP `sepBy` char ',') where parens= between (char '(') (char ')')
+modeP = (oneOf "gbi" >> return G) <|> (oneOf "vof" >> return V)
 
-inn, out, ctx :: TRSParser Strategy
-inn = reserved "INNERMOST"  >> return InnerMost
-out = reserved "OUTERMOST"  >> return OuterMost
-otherStrat = Other `liftM` identifier
-ctx = 
- do reserved "CONTEXTSENSITIVE" 
+goal :: TRSParser Goal
+goal = return Term `ap` identifier `ap` modesP
+
+declStrategy = do
+    reserved "STRATEGY"
+    Strategy `liftM` msumP [ reserved "INNERMOST"  >> return InnerMost  -- probably needs to add try
+                           , reserved "OUTERMOST"  >> return OuterMost
+                           , ctx
+                           , reserved "NARROWING"            >> maybe Narrowing            NarrowingG            <$> option Nothing (Just <$> goal)
+                           , reserved "BASICNARROWING"       >> maybe BasicNarrowing       BasicNarrowingG       <$> option Nothing (Just <$> goal)
+                           , reserved "INNERMOSTNARROWING"   >> maybe InnermostNarrowing   InnermostNarrowingG   <$> option Nothing (Just <$> goal)
+                           , reserved "CONSTRUCTORNARROWING" >> maybe ConstructorNarrowing ConstructorNarrowingG <$> option Nothing (Just <$> goal)
+                           , Other `liftM` identifier
+                           ]
+
+msumP = foldr (<|>) pzero
+infixr 2 <$>
+(<$>) = liftM
+ctx :: TRSParser Strategy
+ctx = do
+    reserved "CONTEXTSENSITIVE" 
     strats <- many$ parens (do a <- identifier
 		               b <- many natural
 		               return (a, map fromInteger b))
