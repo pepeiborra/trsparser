@@ -9,7 +9,8 @@
 -}
 -----------------------------------------------------------------------------------------
 
-module TRSParser (TRSParser, trsParser, term, identifier) where
+module TRSParser (TRSParser, trsParser
+                 , term, identifier, modes) where
 import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
@@ -57,11 +58,11 @@ term =
              then var n
              else mkT n terms
 
-modesP = parens (modeP `sepBy` char ',') where parens= between (char '(') (char ')')
-modeP = (oneOf "gbi" >> return G) <|> (oneOf "vof" >> return V)
+modes = parens (mode `sepBy` char ',') where parens= between (char '(') (char ')')
+mode = (oneOf "gbi" >> return G) <|> (oneOf "vof" >> return V)
 
 goal :: TRSParser Goal
-goal = return Term `ap` identifier `ap` modesP
+goal = return Term `ap` identifier `ap` modes
 
 declStrategy = do
     reserved "STRATEGY"
