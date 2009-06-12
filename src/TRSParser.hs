@@ -9,7 +9,7 @@
 -}
 -----------------------------------------------------------------------------------------
 
-module TRSParser (TRSParser, trsParser, term) where
+module TRSParser (TRSParser, trsParser, term, identifier) where
 import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
