@@ -10,7 +10,8 @@
 -----------------------------------------------------------------------------------------
 
 module TRSParser (TRSParser, trsParser
-                 , term, identifier, modes) where
+                 , decl, term, identifier, modes, goal
+                 , whiteSpace) where
 import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
@@ -21,6 +22,7 @@ import qualified Data.Set as Set
 
 type Vars = Set Id
 type TRSParser a = GenParser Char Vars a
+type SParser s   = GenParser Char s
 
 trsParser :: TRSParser Spec
 trsParser = liftM Spec (many1 (whiteSpace >> parens decl))
@@ -58,10 +60,12 @@ term =
              then var n
              else mkT n terms
 
+modes :: SParser a [Mode]
 modes = parens (mode `sepBy` char ',') where parens= between (char '(') (char ')')
+mode  :: SParser a Mode
 mode = (oneOf "gbi" >> return G) <|> (oneOf "vof" >> return V)
 
-goal :: TRSParser Goal
+goal :: SParser a Goal
 goal = return Term `ap` identifier `ap` modes
 
 declStrategy = do

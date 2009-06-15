@@ -9,7 +9,7 @@
 -}
 -----------------------------------------------------------------------------------------
 
-module TRSTypes where
+module TRSTypes (module TRSTypes, TermF(..)) where
 
 import Data.Foldable
 import Data.Monoid (Monoid(..))
