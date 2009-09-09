@@ -28,7 +28,7 @@ trsParser :: TRSParser Spec
 trsParser = liftM Spec (many1 (whiteSpace >> parens decl))
 
 decl, declVar, declTheory, declRules, declStrategy :: TRSParser Decl
-decl = (declVar <|> declTheory <|> declRules <|> declStrategy <|> declAny)
+decl = (declVar <|> declTheory <|> declRules <|> declPairs <|> declStrategy <|> declAny)
 
 declRules  = reserved "RULES" >> liftM Rules (many rule)
 declPairs  = reserved "PAIRS" >> liftM Pairs (many rule)
