@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------------------
 
 module TRSParser (TRSParser, trsParser
-                 , decl, term, identifier, modes, goal
+                 , decl, term, identifier
                  , whiteSpace) where
 import Text.ParserCombinators.Parsec
 import TRSTypes
@@ -60,23 +60,16 @@ term =
              then var n
              else mkT n terms
 
-modes :: SParser a [Mode]
-modes = parens (mode `sepBy` char ',') where parens= between (char '(') (char ')')
-mode  :: SParser a Mode
-mode = (oneOf "gbi" >> return G) <|> (oneOf "vof" >> return V)
-
-goal :: SParser a Goal
-goal = return Term `ap` identifier `ap` modes
-
 declStrategy = do
     reserved "STRATEGY"
     Strategy `liftM` msumP [ reserved "INNERMOST"  >> return InnerMost  -- probably needs to add try
                            , reserved "OUTERMOST"  >> return OuterMost
                            , ctx
-                           , reserved "NARROWING"            >> maybe Narrowing            NarrowingG            <$> option Nothing (Just <$> goal)
-                           , reserved "BASICNARROWING"       >> maybe BasicNarrowing       BasicNarrowingG       <$> option Nothing (Just <$> goal)
-                           , reserved "INNERMOSTNARROWING"   >> maybe InnermostNarrowing   InnermostNarrowingG   <$> option Nothing (Just <$> goal)
-                           , reserved "CONSTRUCTORNARROWING" >> maybe ConstructorNarrowing ConstructorNarrowingG <$> option Nothing (Just <$> goal)
+                           , reserved "NARROWING"            >> return Narrowing
+                           , reserved "BASICNARROWING"       >> return BasicNarrowing
+                           , reserved "INNERMOSTNARROWING"   >> return InnermostNarrowing
+                           , reserved "CONSTRUCTORNARROWING" >> return ConstructorNarrowing
+                           , reserved "GOAL" >> (GoalStrategy <$> term)
                            , Other `liftM` identifier
                            ]
 

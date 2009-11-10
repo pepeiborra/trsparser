@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------------------
 
 module SRSTypes where
-import Text.PrettyPrint
+import Text.PrettyPrint.HughesPJClass
 import Data.Maybe
 
 data Spec = Spec [Decl] 
@@ -40,17 +40,20 @@ type Id = String
 ---------------- INSTANCES -----------------
 --------------------------------------------
  
-{-instance Show Spec where
- showsPrec _ s rest = (render$ pprintSpec s) ++ rest
-  -}
-  
-pprintSpec (Spec dd)     = vcat (map (parens.pprintDecl) dd)
-pprintDecl (Rules rr)    = text "RULES" <+> (sep$ punctuate comma (map pprintRule rr))
-pprintDecl (Strat x)     = text "STRATEGY" <+> text (show x)
-pprintDecl (Any name cc) = text (maybe "" id name) <+> fsep (map pprintAnyC cc)
-pprintRule (r1 :-> r2)   = pprintRule r1 <+> ptext ":->" <+> pprintRule r2 
-pprintRule (r1 :->= r2)  = pprintRule r1 <+> ptext ":->=" <+> pprintRule r2
-pprintRule (Single w1)   = text (unwords w1)
-pprintAnyC (AnyI i)      = text i
-pprintAnyC (AnyS s)      = text s
-pprintAnyC (AnyA aa)     = fsep (map pprintAnyC aa)
+instance Pretty Spec where
+  pPrint (Spec dd)     = vcat (map (parens.pPrint) dd)
+
+instance Pretty Decl where
+  pPrint (Rules rr)    = text "RULES" <+> (sep$ punctuate comma (map pPrint rr))
+  pPrint (Strat x)     = text "STRATEGY" <+> text (show x)
+  pPrint (Any name cc) = text (maybe "" id name) <+> fsep (map pPrint cc)
+
+instance Pretty Rule where
+  pPrint (r1 :-> r2)   = pPrint r1 <+> ptext ":->" <+> pPrint r2
+  pPrint (r1 :->= r2)  = pPrint r1 <+> ptext ":->=" <+> pPrint r2
+  pPrint (Single w1)   = text (unwords w1)
+
+instance Pretty AnyContent where
+  pPrint (AnyI i)      = text i
+  pPrint (AnyS s)      = text s
+  pPrint (AnyA aa)     = fsep (map pPrint aa)

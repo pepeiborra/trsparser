@@ -15,6 +15,7 @@ import Data.Foldable
 import Data.Monoid (Monoid(..))
 import Data.Term hiding (Term)
 import Data.Term.Simple
+import Text.PrettyPrint.HughesPJClass hiding (Mode)
 
 type Spec = SpecF Decl
 data SpecF a = Spec [a]
@@ -57,22 +58,16 @@ data CondF a = a :-><-: a
  deriving (Eq, Show)
 
 
-data Strategy = InnerMost
+data Strategy = GoalStrategy Term
+              | InnerMost
               | OuterMost
               | Context [(Id, [Int])]
               | Narrowing
-              | NarrowingG Goal
               | ConstructorNarrowing
-              | ConstructorNarrowingG Goal
               | BasicNarrowing
-              | BasicNarrowingG Goal
               | InnermostNarrowing
-              | InnermostNarrowingG Goal
               | Other String
- deriving (Eq, Show)
-
-type Goal = TermF String Mode
-data Mode = G | V deriving (Eq, Bounded, Show)
+ deriving (Eq, Ord, Show)
 
 data AnyContent = AnyI Id
                 | AnyS String
@@ -119,3 +114,14 @@ instance Foldable SimpleRuleF where
 instance Foldable CondF where
     foldMap f (a :->: b)   = f a `mappend` f b
     foldMap f (a :-><-: b) = f a `mappend` f b
+
+instance Pretty a => Pretty (RuleF a) where
+  pPrint (Rule sr c) = pPrint sr $$ nest 4 (text "if" <+> pPrint c)
+
+instance Pretty a => Pretty (SimpleRuleF a) where
+  pPrint (a :-> b) = pPrint a <+> text "->" <+> pPrint b
+  pPrint (a :->= b) = pPrint a <+> text "->=" <+> pPrint b
+
+instance Pretty a => Pretty (CondF a) where
+  pPrint (a :->: b) = pPrint a <+> text "->" <+> pPrint b
+  pPrint (a :-><-: b) = pPrint a <+> text "-><-" <+> pPrint b
