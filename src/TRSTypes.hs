@@ -11,22 +11,24 @@
 
 module TRSTypes (module TRSTypes, TermF(..)) where
 
+import Control.Applicative
 import Data.Foldable
 import Data.Monoid (Monoid(..))
 import Data.Term hiding (Term)
 import Data.Term.Simple
+import Data.Traversable
 import Text.PrettyPrint.HughesPJClass hiding (Mode)
 
 type Spec = SpecF Decl
 data SpecF a = Spec [a]
  deriving (Eq, Show)
 
-type Decl = DeclF Rule
+type Decl = DeclF Term
 data DeclF a = Var [Id]
 	     | Theory [TheoryDecl]
-             | Pairs [a]
-	     | Rules [a]
-	     | Strategy Strategy
+             | Pairs [RuleF a]
+	     | Rules [RuleF a]
+	     | Strategy (Strategy a)
 	     | Any (Maybe String) [AnyContent]
  deriving (Eq, Show)
 
@@ -58,15 +60,15 @@ data CondF a = a :-><-: a
  deriving (Eq, Show)
 
 
-data Strategy = GoalStrategy Term
-              | InnerMost
-              | OuterMost
-              | Context [(Id, [Int])]
-              | Narrowing
-              | ConstructorNarrowing
-              | BasicNarrowing
-              | InnermostNarrowing
-              | Other String
+data Strategy a = GoalStrategy a
+                | InnerMost
+                | OuterMost
+                | Context [(Id, [Int])]
+                | Narrowing
+                | ConstructorNarrowing
+                | BasicNarrowing
+                | InnermostNarrowing
+                | Other String
  deriving (Eq, Ord, Show)
 
 data AnyContent = AnyI Id
@@ -80,9 +82,9 @@ instance Functor SpecF where fmap f (Spec aa) = Spec (map f aa)
 instance Functor DeclF where
     fmap _ (Var vv)     = Var vv
     fmap _ (Theory tt)  = Theory tt
-    fmap f (Rules rr)   = Rules (map f rr)
-    fmap f (Pairs rr)   = Pairs (map f rr)
-    fmap _ (Strategy s) = Strategy s
+    fmap f (Rules rr)   = Rules ((fmap.fmap) f rr)
+    fmap f (Pairs rr)   = Pairs ((fmap.fmap) f rr)
+    fmap f (Strategy s) = Strategy (fmap f s)
     fmap _ (Any ms c)   = Any ms c
 
 instance Functor RuleF where fmap f (Rule sr c) = Rule (fmap f sr) ((fmap.fmap) f c)
@@ -95,14 +97,26 @@ instance Functor CondF where
     fmap f (a :->: b)   = f a :->: f b
     fmap f (a :-><-: b) = f a :-><-: f b
 
+instance Functor Strategy where fmap = fmapDefault
+instance Foldable Strategy where foldMap = foldMapDefault
+
+instance Traversable Strategy where
+    traverse f (GoalStrategy a) = GoalStrategy <$> f a
+    traverse _ InnerMost = pure InnerMost
+    traverse _ OuterMost = pure OuterMost
+    traverse _ (Context ct) = pure (Context ct)
+    traverse _ Narrowing = pure Narrowing
+    traverse _ ConstructorNarrowing = pure ConstructorNarrowing
+    traverse _ BasicNarrowing = pure BasicNarrowing
+    traverse _ InnermostNarrowing = pure InnermostNarrowing
 
 instance Foldable SpecF where foldMap f (Spec aa) = foldMap f aa
 instance Foldable DeclF where
     foldMap _ (Var vv)     = mempty
     foldMap _ (Theory tt)  = mempty
-    foldMap f (Rules rr)   = (foldMap f rr)
-    foldMap f (Pairs rr)   = (foldMap f rr)
-    foldMap _ (Strategy s) = mempty
+    foldMap f (Rules rr)   = ((foldMap.foldMap) f rr)
+    foldMap f (Pairs rr)   = ((foldMap.foldMap) f rr)
+    foldMap f (Strategy s) = foldMap f s
     foldMap _ (Any ms c)   = mempty
 
 instance Foldable RuleF where foldMap f (Rule sr c) = foldMap f sr `mappend` (foldMap.foldMap) f c
@@ -125,3 +139,4 @@ instance Pretty a => Pretty (SimpleRuleF a) where
 instance Pretty a => Pretty (CondF a) where
   pPrint (a :->: b) = pPrint a <+> text "->" <+> pPrint b
   pPrint (a :-><-: b) = pPrint a <+> text "-><-" <+> pPrint b
+

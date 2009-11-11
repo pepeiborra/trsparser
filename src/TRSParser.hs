@@ -76,7 +76,8 @@ declStrategy = do
 msumP = foldr (<|>) pzero
 infixr 2 <$>
 (<$>) = liftM
-ctx :: TRSParser Strategy
+
+--ctx :: TRSParser (Strategy Term)
 ctx = do
     reserved "CONTEXTSENSITIVE" 
     strats <- many$ parens (do a <- identifier
