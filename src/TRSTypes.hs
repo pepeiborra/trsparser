@@ -1,3 +1,5 @@
+
+{-# LANGUAGE TypeFamilies #-}
 -----------------------------------------------------------------------------------------
 {-| Module      : TRS
     Copyright   :
@@ -14,8 +16,10 @@ module TRSTypes (module TRSTypes, TermF(..)) where
 import Control.Applicative
 import Data.Foldable
 import Data.Monoid (Monoid(..))
-import Data.Term hiding (Term)
+import Data.Term hiding (Term, TermF, Id)
 import Data.Term.Simple
+import Data.Term.Variables
+import qualified Data.Term.Family as Family
 import Data.Traversable
 import Text.PrettyPrint.HughesPJClass hiding (Mode)
 
@@ -35,6 +39,7 @@ data DeclF a = Var [Id]
 data TheoryDecl = TVar [Id]
 		| Equations [Equation]
  deriving (Eq, Show)
+
 
 type Term = Term1 String String
 mkT = term
@@ -77,6 +82,21 @@ data AnyContent = AnyI Id
  deriving (Eq, Show)
 
 type Id = String
+
+
+-- --------------------------------------
+-- Family instances for TRS syntax types
+-- --------------------------------------
+
+type instance Family.Var (DeclF a) = Family.Var a
+type instance Family.TermF (DeclF a) = Family.TermF a
+type instance Family.Id (DeclF a) = Family.Id a
+
+instance GetVars a => GetVars (DeclF a) where getVars = foldMap getVars
+
+-- -------------------
+-- Functor instances
+-- -------------------
 
 instance Functor SpecF where fmap f (Spec aa) = Spec (map f aa)
 instance Functor DeclF where

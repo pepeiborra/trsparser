@@ -16,7 +16,6 @@ import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
 import Control.Monad
-import Data.Term.Simple (TermF(..))
 import Data.Set (Set)
 import qualified Data.Set as Set
 
