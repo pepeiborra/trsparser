@@ -73,6 +73,7 @@ data Strategy a = GoalStrategy a
                 | ConstructorNarrowing
                 | BasicNarrowing
                 | InnermostNarrowing
+                | Q [a]
                 | Other String
  deriving (Eq, Ord, Show)
 
@@ -122,6 +123,7 @@ instance Foldable Strategy where foldMap = foldMapDefault
 
 instance Traversable Strategy where
     traverse f (GoalStrategy a) = GoalStrategy <$> f a
+    traverse f (Q q) = Q <$> traverse f q
     traverse _ InnerMost = pure InnerMost
     traverse _ OuterMost = pure OuterMost
     traverse _ (Context ct) = pure (Context ct)
@@ -129,6 +131,7 @@ instance Traversable Strategy where
     traverse _ ConstructorNarrowing = pure ConstructorNarrowing
     traverse _ BasicNarrowing = pure BasicNarrowing
     traverse _ InnermostNarrowing = pure InnermostNarrowing
+    traverse _ (Other x) = pure (Other x)
 
 instance Foldable SpecF where foldMap f (Spec aa) = foldMap f aa
 instance Foldable DeclF where

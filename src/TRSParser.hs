@@ -69,6 +69,7 @@ declStrategy = do
                            , reserved "INNERMOSTNARROWING"   >> return InnermostNarrowing
                            , reserved "CONSTRUCTORNARROWING" >> return ConstructorNarrowing
                            , reserved "GOAL" >> (GoalStrategy <$> term)
+                           , reserved "Q" >> (Q <$> many term)
                            , Other `liftM` identifier
                            ]
 
