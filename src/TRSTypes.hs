@@ -18,7 +18,7 @@ import Data.Foldable
 import Data.Monoid (Monoid(..))
 import Data.Term hiding (Term, TermF, Id)
 import Data.Term.Simple
-import Data.Term.Variables
+import Data.Term.Substitutions
 import qualified Data.Term.Family as Family
 import Data.Traversable
 import Text.PrettyPrint.HughesPJClass hiding (Mode)
