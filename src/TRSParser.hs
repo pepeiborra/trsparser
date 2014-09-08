@@ -96,7 +96,7 @@ simpleRule =
     t2 <- term
     return (op t1 t2)
 
-ruleOps = (reservedOp "->"  >> return (:->))
+ruleOps = ((reservedOp "->"  <|> reservedOp "→") >> return (:->))
       <|> (reservedOp "->=" >> return (:->=))
 
 cond = 
