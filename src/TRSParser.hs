@@ -15,6 +15,7 @@ module TRSParser (TRSParser, trsParser
 import Text.ParserCombinators.Parsec
 import TRSTypes
 import TRSScanner
+import Control.Applicative ((<$>))
 import Control.Monad
 import Data.Set (Set)
 import qualified Data.Set as Set
@@ -74,8 +75,7 @@ declStrategy = do
                            ]
 
 msumP = foldr (<|>) pzero
-infixr 2 <$>
-(<$>) = liftM
+
 
 --ctx :: TRSParser (Strategy Term)
 ctx = do
