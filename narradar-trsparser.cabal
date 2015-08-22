@@ -5,7 +5,7 @@ build-type: Simple
 license-file: LICENSE 
 copyright: 
 maintainer: Pepe Iborra <pepeiborra@gmail.com>
-build-depends: base -any, containers, parsec, prettyclass, narradar-term
+build-depends: base -any, containers, parsec, pretty, narradar-term
 stability: stable
 homepage: A parser for the Rewriting Termination Competition format
 package-url: 
